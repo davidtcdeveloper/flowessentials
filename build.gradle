@@ -12,6 +12,49 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+    ext {
+        // global variables
+        kotlin_version = '1.4.10'
+
+        // local variables (use def)
+        def appcompat_version = '1.2.0'
+        def constraint_layout_version = '2.0.2'
+        def coroutines_android_version = '1.4.0'
+        def junit_version = '4.12'
+        def lifecycle_version = '2.1.0'
+        def livedata_version = '2.2.0-rc02'
+        def material_version = '1.2.1'
+        def ktx_lifecycle = '2.2.0'
+        def hamcrestVersion = '2.2'
+
+        libraries = [
+                // Kotlin standard library
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+
+                // Coroutines
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_android_version",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version",
+
+                // Android UI and appcompat
+                "androidx.appcompat:appcompat:$appcompat_version",
+                "com.google.android.material:material:$material_version",
+                "androidx.constraintlayout:constraintlayout:$constraint_layout_version",
+
+                // ViewModel and LiveData
+                "androidx.lifecycle:lifecycle-extensions:$lifecycle_version",
+                "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version",
+                "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+                // Extensions
+                "androidx.lifecycle:lifecycle-runtime-ktx:$ktx_lifecycle"
+        ]
+
+        testLibraries = [
+                "junit:junit:$junit_version",
+                "org.hamcrest:hamcrest-core:$hamcrestVersion",
+                // Coroutines testing
+                "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_android_version",
+        ]
+    }
 }
 
 allprojects {
