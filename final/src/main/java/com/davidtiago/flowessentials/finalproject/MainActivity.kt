@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
+@SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
     private val cache = ComputationCache()
 
@@ -23,12 +24,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.progress.hide()
+        binding.progressBar.visibility = View.GONE
         binding.cancelButton.visibility = View.GONE
         binding.computeButton.setOnClickListener {
             with(binding) {
                 textView.text = ""
-                progress.show()
+                binding.progressBar.visibility = View.VISIBLE
                 computeButton.visibility = View.GONE
                 cancelButton.visibility = View.VISIBLE
             }
@@ -36,18 +37,8 @@ class MainActivity : AppCompatActivity() {
                 val number = binding.editTextNumber.text.toString().toLong()
                 isPrimeNo(number).collect { progress ->
                     when (progress) {
-                        is ComputationProgress.Completed -> {
-                            if (progress.isPrime) {
-                                binding.textView.text = "$number \n is a prime number 👍"
-                            } else {
-                                binding.textView.text =
-                                    "$number \n is NOT a prime number 👎 \n can be divided by ${progress.divisors} other numbers"
-                            }
-                            binding.computeButton.visibility = View.VISIBLE
-                            binding.cancelButton.visibility = View.GONE
-                            binding.progress.hide()
-                        }
-                        is ComputationProgress.Computing -> TODO()
+                        is ComputationProgress.Completed -> handleCompleted(progress, number)
+                        is ComputationProgress.Computing -> handleComputing(progress)
                     }
                 }
             }
@@ -56,12 +47,32 @@ class MainActivity : AppCompatActivity() {
             scope.cancel()
             scope = CoroutineScope(Job() + Dispatchers.Main)
             with(binding) {
-                progress.hide()
+                binding.progressBar.visibility = View.GONE
                 textView.text = "Computation cancelled"
                 computeButton.visibility = View.VISIBLE
                 cancelButton.visibility = View.GONE
             }
         }
+    }
+
+    private fun handleComputing(progress: ComputationProgress.Computing) {
+        binding.progressBar.max = progress.maxProgress
+        binding.progressBar.progress = progress.currentProgress
+    }
+
+    private fun handleCompleted(
+        progress: ComputationProgress.Completed,
+        number: Long
+    ) {
+        if (progress.isPrime) {
+            binding.textView.text = "$number \n is a prime number 👍"
+        } else {
+            binding.textView.text =
+                "$number \n is NOT a prime number 👎 \n can be divided by ${progress.divisors} other numbers"
+        }
+        binding.computeButton.visibility = View.VISIBLE
+        binding.cancelButton.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
     }
 
     override fun onStart() {
@@ -93,6 +104,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Log.d("isPrimeNo", "Can't be divided by $i")
             }
+            if (i.rem(1000) == 0.toLong()) {
+                emit(
+                    ComputationProgress.Computing(
+                        maxProgress = range.count(),
+                        currentProgress = i.toInt()
+                    )
+                )
+            }
         }
         cache.computationCompleted(number, divisorCount)
         emit(ComputationProgress.Completed(divisorCount))
@@ -101,8 +120,8 @@ class MainActivity : AppCompatActivity() {
 
 sealed class ComputationProgress {
     data class Computing(
-        val maxProgress: Long,
-        val currentProgress: Long,
+        val maxProgress: Int,
+        val currentProgress: Int,
     ) : ComputationProgress()
 
     data class Completed(
