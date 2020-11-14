@@ -1,12 +1,15 @@
 package com.davidtiago.flowessentials.finalproject
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.davidtiago.flowessentials.finalproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class MainActivity : AppCompatActivity() {
     private val cache = ComputationCache()
@@ -31,23 +34,27 @@ class MainActivity : AppCompatActivity() {
             }
             scope.launch {
                 val number = binding.editTextNumber.text.toString().toLong()
-                val count = isPrimeNo(number)
-                withContext(Dispatchers.Main) {
-                    if (count == 0.toLong()) {
-                        binding.textView.text = "$number \n is a prime number 👍"
-                    } else {
-                        binding.textView.text =
-                            "$number \n is NOT a prime number 👎 \n can be divided by $count other numbers"
+                isPrimeNo(number).collect { progress ->
+                    when (progress) {
+                        is ComputationProgress.Completed -> {
+                            if (progress.isPrime) {
+                                binding.textView.text = "$number \n is a prime number 👍"
+                            } else {
+                                binding.textView.text =
+                                    "$number \n is NOT a prime number 👎 \n can be divided by ${progress.divisors} other numbers"
+                            }
+                            binding.computeButton.visibility = View.VISIBLE
+                            binding.cancelButton.visibility = View.GONE
+                            binding.progress.hide()
+                        }
+                        is ComputationProgress.Computing -> TODO()
                     }
-                    binding.computeButton.visibility = View.VISIBLE
-                    binding.cancelButton.visibility = View.GONE
-                    binding.progress.hide()
                 }
             }
         }
         binding.cancelButton.setOnClickListener {
             scope.cancel()
-            scope = CoroutineScope(Job())
+            scope = CoroutineScope(Job() + Dispatchers.Main)
             with(binding) {
                 progress.hide()
                 textView.text = "Computation cancelled"
@@ -59,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        scope = CoroutineScope(Job())
+        scope = CoroutineScope(Job() + Dispatchers.Main)
     }
 
     override fun onStop() {
@@ -67,13 +74,16 @@ class MainActivity : AppCompatActivity() {
         scope.cancel()
     }
 
-    private suspend fun isPrimeNo(number: Long): Long = withContext(Dispatchers.Default) {
+    private fun isPrimeNo(number: Long) = flow<ComputationProgress> {
         val range = 2.toLong()..number / 2.toLong()
         var divisorCount: Long = 0
         val cacheForNumber = cache.forNumber(number)
         cacheForNumber?.let {
             Log.d("isPrimeNo", "Returning cached value")
-            return@withContext cacheForNumber
+            emit(
+                ComputationProgress.Completed(cacheForNumber)
+            )
+            return@flow
         }
         for (i in range) {
             yield()
@@ -85,6 +95,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
         cache.computationCompleted(number, divisorCount)
-        return@withContext divisorCount
+        emit(ComputationProgress.Completed(divisorCount))
+    }.flowOn(Dispatchers.Default)
+}
+
+sealed class ComputationProgress {
+    data class Computing(
+        val maxProgress: Long,
+        val currentProgress: Long,
+    ) : ComputationProgress()
+
+    data class Completed(
+        val divisors: Long,
+    ) : ComputationProgress() {
+        val isPrime: Boolean
+            get() = divisors > 1
     }
 }
