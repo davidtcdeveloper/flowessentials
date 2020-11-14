@@ -1,0 +1,3 @@
+rootProject.name = "Flow Essentials"
+include ':initial'
+include ':final'
