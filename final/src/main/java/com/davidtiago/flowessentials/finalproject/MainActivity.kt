@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         scope.cancel()
     }
 
-    private fun isPrimeNo(number: Long) = flow<ComputationProgress> {
+    private fun isPrimeNo(number: Long) = flow {
         val range = 2.toLong()..number / 2.toLong()
         var divisorCount: Long = 0
         val cacheForNumber = cache.forNumber(number)
