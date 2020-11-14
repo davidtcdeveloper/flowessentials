@@ -24,17 +24,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.progressBar.visibility = View.GONE
-        binding.cancelButton.visibility = View.GONE
+        adjustViewForReadyToComputeState()
         binding.computeButton.setOnClickListener {
-            with(binding) {
-                textView.text = ""
-                binding.progressBar.visibility = View.VISIBLE
-                computeButton.visibility = View.GONE
-                cancelButton.visibility = View.VISIBLE
-            }
             scope.launch {
                 val number = binding.editTextNumber.text.toString().toLong()
+                binding.textView.text = ""
                 isPrimeNo(number).collect { progress ->
                     when (progress) {
                         is ComputationProgress.Completed -> handleCompleted(progress, number)
@@ -44,20 +38,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.cancelButton.setOnClickListener {
-            scope.cancel()
-            scope = CoroutineScope(Job() + Dispatchers.Main)
-            with(binding) {
-                binding.progressBar.visibility = View.GONE
-                textView.text = "Computation cancelled"
-                computeButton.visibility = View.VISIBLE
-                cancelButton.visibility = View.GONE
-            }
+            cancelComputing()
+        }
+    }
+
+    private fun cancelComputing() {
+        scope.cancel()
+        scope = newScope()
+        with(binding) {
+            textView.text = "Computation cancelled"
+            adjustViewForReadyToComputeState()
         }
     }
 
     private fun handleComputing(progress: ComputationProgress.Computing) {
-        binding.progressBar.max = progress.maxProgress
-        binding.progressBar.progress = progress.currentProgress
+        with(binding) {
+            progressBar.visibility = View.VISIBLE
+            computeButton.visibility = View.GONE
+            cancelButton.visibility = View.VISIBLE
+            progressBar.max = progress.maxProgress
+            progressBar.progress = progress.currentProgress
+        }
     }
 
     private fun handleCompleted(
@@ -70,15 +71,21 @@ class MainActivity : AppCompatActivity() {
             binding.textView.text =
                 "$number \n is NOT a prime number 👎 \n can be divided by ${progress.divisors} other numbers"
         }
+        adjustViewForReadyToComputeState()
+    }
+
+    private fun adjustViewForReadyToComputeState() {
         binding.computeButton.visibility = View.VISIBLE
-        binding.cancelButton.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
+        binding.cancelButton.visibility = View.GONE
     }
 
     override fun onStart() {
         super.onStart()
-        scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope = newScope()
     }
+
+    private fun newScope() = CoroutineScope(Job() + Dispatchers.Main)
 
     override fun onStop() {
         super.onStop()
