@@ -38,15 +38,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.cancelButton.setOnClickListener {
-            cancelComputing()
-        }
-    }
-
-    private fun cancelComputing() {
-        scope.cancel()
-        scope = newScope()
-        with(binding) {
-            textView.text = "Computation cancelled"
+            scope.cancel()
+            scope = newScope()
+            binding.textView.text = "Computation cancelled"
             adjustViewForReadyToComputeState()
         }
     }
@@ -103,8 +97,13 @@ class MainActivity : AppCompatActivity() {
             )
             return@flow
         }
+        emit(
+            ComputationProgress.Computing(
+                maxProgress = range.count(),
+                currentProgress = 0
+            )
+        )
         for (i in range) {
-            yield()
             if (number.rem(i) == 0.toLong()) {
                 Log.d("isPrimeNo", "Can be divided by $i")
                 divisorCount += 1
