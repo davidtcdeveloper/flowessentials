@@ -31,11 +31,6 @@ class MainActivity : AppCompatActivity() {
                 val number = binding.editTextNumber.text.toString().toLong()
                 binding.textView.text = ""
                 isPrimeNo(number)
-                    .filter { computationProgress ->
-                        computationProgress is ComputationProgress.Completed ||
-                                (computationProgress is ComputationProgress.Computing &&
-                                        computationProgress.currentProgress.rem(1000) == 0)
-                    }
                     .collect { progress ->
                         when (progress) {
                             is ComputationProgress.Completed -> handleCompleted(progress, number)
@@ -53,12 +48,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleComputing(progress: ComputationProgress.Computing) {
-        with(binding) {
-            progressBar.visibility = View.VISIBLE
-            computeButton.visibility = View.GONE
-            cancelButton.visibility = View.VISIBLE
-            progressBar.max = progress.maxProgress
-            progressBar.progress = progress.currentProgress
+        scope.launch {
+            with(binding) {
+                progressBar.visibility = View.VISIBLE
+                computeButton.visibility = View.GONE
+                cancelButton.visibility = View.VISIBLE
+                progressBar.max = progress.maxProgress
+                progressBar.progress = progress.currentProgress
+            }
         }
     }
 
@@ -113,8 +110,10 @@ class MainActivity : AppCompatActivity() {
         val zero : Long = 0
         for (i in range) {
             if (number.rem(i) == zero) {
-                Log.d("isPrimeNo", "Can be divided by $i")
+                Log.d("isPrimeNo", "CAN be divided by $i")
                 divisorCount += 1
+            } else{
+                Log.d("isPrimeNo", "CAN'T be divided by $i")
             }
             emit(
                 ComputationProgress.Computing(
