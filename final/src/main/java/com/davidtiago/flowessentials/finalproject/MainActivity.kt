@@ -31,6 +31,11 @@ class MainActivity : AppCompatActivity() {
                 val number = binding.editTextNumber.text.toString().toLong()
                 binding.textView.text = ""
                 isPrimeNo(number)
+                    .filter { computationProgress ->
+                        computationProgress is ComputationProgress.Completed ||
+                                (computationProgress is ComputationProgress.Computing &&
+                                        computationProgress.currentProgress.rem(1000) == 0)
+                    }
                     .collect { progress ->
                         when (progress) {
                             is ComputationProgress.Completed -> handleCompleted(progress, number)
@@ -49,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleComputing(progress: ComputationProgress.Computing) {
         scope.launch {
+
             with(binding) {
                 progressBar.visibility = View.VISIBLE
                 computeButton.visibility = View.GONE
