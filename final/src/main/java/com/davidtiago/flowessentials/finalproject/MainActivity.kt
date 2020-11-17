@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.davidtiago.flowessentials.finalproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
@@ -29,12 +30,18 @@ class MainActivity : AppCompatActivity() {
             scope.launch {
                 val number = binding.editTextNumber.text.toString().toLong()
                 binding.textView.text = ""
-                isPrimeNo(number).collect { progress ->
-                    when (progress) {
-                        is ComputationProgress.Completed -> handleCompleted(progress, number)
-                        is ComputationProgress.Computing -> handleComputing(progress)
+                isPrimeNo(number)
+                    .filter { computationProgress ->
+                        computationProgress is ComputationProgress.Completed ||
+                                (computationProgress is ComputationProgress.Computing &&
+                                        computationProgress.currentProgress.rem(1000) == 0)
                     }
-                }
+                    .collect { progress ->
+                        when (progress) {
+                            is ComputationProgress.Completed -> handleCompleted(progress, number)
+                            is ComputationProgress.Computing -> handleComputing(progress)
+                        }
+                    }
             }
         }
         binding.cancelButton.setOnClickListener {
@@ -103,21 +110,18 @@ class MainActivity : AppCompatActivity() {
                 currentProgress = 0
             )
         )
+        val zero : Long = 0
         for (i in range) {
-            if (number.rem(i) == 0.toLong()) {
+            if (number.rem(i) == zero) {
                 Log.d("isPrimeNo", "Can be divided by $i")
                 divisorCount += 1
-            } else {
-                Log.d("isPrimeNo", "Can't be divided by $i")
             }
-            if (i.rem(1000) == 0.toLong()) {
-                emit(
-                    ComputationProgress.Computing(
-                        maxProgress = range.count(),
-                        currentProgress = i.toInt()
-                    )
+            emit(
+                ComputationProgress.Computing(
+                    maxProgress = range.count(),
+                    currentProgress = i.toInt()
                 )
-            }
+            )
         }
         cache.computationCompleted(number, divisorCount)
         emit(ComputationProgress.Completed(divisorCount))
@@ -134,6 +138,6 @@ sealed class ComputationProgress {
         val divisors: Long,
     ) : ComputationProgress() {
         val isPrime: Boolean
-            get() = divisors > 1
+            get() = divisors == 0.toLong()
     }
 }
