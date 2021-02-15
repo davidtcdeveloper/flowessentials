@@ -2,35 +2,35 @@ package com.davidtiago.flowessentials.finalproject
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.davidtiago.flowessentials.finalproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
-    private val cache = ComputationCache()
 
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var scope: CoroutineScope
+
+    private lateinit var primeNumberComputer: PrimeNumberComputer
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        primeNumberComputer = PrimeNumberComputer()
+
         adjustViewForReadyToComputeState()
         binding.computeButton.setOnClickListener {
             scope.launch {
                 val number = binding.editTextNumber.text.toString().toLong()
                 binding.textView.text = ""
-                isPrimeNo(number)
+                primeNumberComputer.computeDivisors(number)
                     .filter { computationProgress ->
                         computationProgress is ComputationProgress.Completed ||
                                 (computationProgress is ComputationProgress.Computing &&
@@ -95,42 +95,6 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         scope.cancel()
     }
-
-    private fun isPrimeNo(number: Long) = flow {
-        val range = 2.toLong()..number / 2.toLong()
-        var divisorCount: Long = 0
-        val cacheForNumber = cache.forNumber(number)
-        cacheForNumber?.let {
-            Log.d("isPrimeNo", "Returning cached value")
-            emit(
-                ComputationProgress.Completed(cacheForNumber)
-            )
-            return@flow
-        }
-        emit(
-            ComputationProgress.Computing(
-                maxProgress = range.count(),
-                currentProgress = 0
-            )
-        )
-        val zero : Long = 0
-        for (i in range) {
-            if (number.rem(i) == zero) {
-                Log.d("isPrimeNo", "CAN be divided by $i")
-                divisorCount += 1
-            } else{
-                Log.d("isPrimeNo", "CAN'T be divided by $i")
-            }
-            emit(
-                ComputationProgress.Computing(
-                    maxProgress = range.count(),
-                    currentProgress = i.toInt()
-                )
-            )
-        }
-        cache.computationCompleted(number, divisorCount)
-        emit(ComputationProgress.Completed(divisorCount))
-    }.flowOn(Dispatchers.Default)
 }
 
 sealed class ComputationProgress {
