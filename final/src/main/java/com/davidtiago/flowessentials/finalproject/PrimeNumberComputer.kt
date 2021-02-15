@@ -13,7 +13,7 @@ class PrimeNumberComputer(
     cacheDispatcher: CoroutineDispatcher =
         Executors.newSingleThreadExecutor().asCoroutineDispatcher(),
 ) {
-    private val cache = ComputationCache(cacheDispatcher)
+    private val cache: ComputationCache = MemoryComputationCache(cacheDispatcher)
 
     fun computeDivisors(number: Long) = flow {
         val range = 2.toLong()..number / 2.toLong()
