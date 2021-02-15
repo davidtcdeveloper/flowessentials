@@ -6,18 +6,20 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PrimeNumberComputerTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
 
-    private val primeNumberComputer = PrimeNumberComputer(
-        testDispatcher,
-        testDispatcher
-    )
-
     @Nested
     inner class ComputeDivisorsPrimeNumbersScenarios {
+        private val primeNumberComputer = PrimeNumberComputer(
+            testDispatcher,
+            testDispatcher,
+            cache = AlwaysEmptyCache()
+        )
+
         @Test
         fun `all emissions for 2`() =
             testDispatcher.runBlockingTest {
@@ -90,6 +92,12 @@ class PrimeNumberComputerTest {
 
     @Nested
     inner class ComputeDivisorsNonPrimeNumbersScenarios {
+        private val primeNumberComputer = PrimeNumberComputer(
+            testDispatcher,
+            testDispatcher,
+            cache = AlwaysEmptyCache()
+        )
+
         @Test
         fun `all emissions for 4`() =
             testDispatcher.runBlockingTest {
@@ -121,4 +129,72 @@ class PrimeNumberComputerTest {
                 )
             }
     }
+
+    @Nested
+    inner class CacheScenarios {
+        @Test
+        fun `cache for 10`() =
+            testDispatcher.runBlockingTest {
+                val cache = FixedCache(10, 2)
+                val primeNumberComputer = PrimeNumberComputer(
+                    testDispatcher,
+                    testDispatcher,
+                    cache = cache,
+                )
+                val collectedDivisors: List<ComputationProgress> =
+                    primeNumberComputer.computeDivisors(10)
+                        .toList()
+
+                assertEquals(
+                    expected = listOf(ComputationProgress.Completed(2)),
+                    actual = collectedDivisors
+                )
+                assertTrue { cache.invoked }
+            }
+
+        @Test
+        fun `cache for 1481`() =
+            testDispatcher.runBlockingTest {
+                val cache = FixedCache(1481, 0)
+                val primeNumberComputer = PrimeNumberComputer(
+                    testDispatcher,
+                    testDispatcher,
+                    cache = cache,
+                )
+                val collectedDivisors: List<ComputationProgress> =
+                    primeNumberComputer.computeDivisors(1481)
+                        .toList()
+
+                assertEquals(
+                    expected = listOf(ComputationProgress.Completed(0)),
+                    actual = collectedDivisors
+                )
+                assertTrue { cache.invoked }
+            }
+    }
+
+    private inner class AlwaysEmptyCache : ComputationCache {
+        override suspend fun forNumber(number: Long): Long? = null
+
+        override suspend fun computationCompleted(number: Long, divisorCount: Long) = Unit
+    }
+
+    private inner class FixedCache(
+        val forNumber: Long,
+        val divisorCount: Long,
+    ) : ComputationCache {
+        var invoked = false
+        override suspend fun forNumber(number: Long): Long {
+            return if (forNumber != number) {
+                throw IllegalStateException("Invoked for wrong number: $number")
+            } else {
+                invoked = true
+                divisorCount
+            }
+        }
+
+        override suspend fun computationCompleted(number: Long, divisorCount: Long) =
+            throw IllegalStateException("Should not invoke computationCompleted")
+    }
 }
+
