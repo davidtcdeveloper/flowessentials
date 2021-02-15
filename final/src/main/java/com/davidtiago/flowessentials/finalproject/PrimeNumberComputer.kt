@@ -1,11 +1,11 @@
 package com.davidtiago.flowessentials.finalproject
 
-import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import timber.log.Timber
 import java.util.concurrent.Executors
 
 class PrimeNumberComputer(
@@ -20,7 +20,7 @@ class PrimeNumberComputer(
         var divisorCount: Long = 0
         val cacheForNumber = cache.forNumber(number)
         cacheForNumber?.let {
-            Log.d("isPrimeNo", "Returning cached value")
+            Timber.d("Returning cached value")
             emit(
                 ComputationProgress.Completed(cacheForNumber)
             )
@@ -35,10 +35,10 @@ class PrimeNumberComputer(
         val zero: Long = 0
         for (i in range) {
             if (number.rem(i) == zero) {
-                Log.d("isPrimeNo", "CAN be divided by $i")
+                Timber.d("isPrimeNo: CAN be divided by %d", i)
                 divisorCount += 1
             } else {
-                Log.d("isPrimeNo", "CAN'T be divided by $i")
+                Timber.d("isPrimeNo: CAN'T be divided by %d", i)
             }
             emit(
                 ComputationProgress.Computing(
