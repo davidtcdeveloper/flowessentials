@@ -1,17 +1,22 @@
 package com.davidtiago.flowessentials.finalproject
 
-import junit.framework.TestCase
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PrimeNumberComputerTest : TestCase() {
+class PrimeNumberComputerTest {
 
-    private val primeNumberComputer = PrimeNumberComputer()
+    private val testDispatcher = TestCoroutineDispatcher()
+
+    private val primeNumberComputer = PrimeNumberComputer(
+        testDispatcher,
+        testDispatcher
+    )
 
     @Test
-    fun `computeDivisors should return no divisors for 2`() = runBlockingTest {
+    fun `computeDivisors should return no divisors for 2`() = testDispatcher.runBlockingTest {
         val collectedDivisors: List<ComputationProgress> =
             primeNumberComputer.computeDivisors(2)
                 .toList()

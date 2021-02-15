@@ -1,12 +1,19 @@
 package com.davidtiago.flowessentials.finalproject
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.util.concurrent.Executors
 
-class PrimeNumberComputer {
-    private val cache = ComputationCache()
+class PrimeNumberComputer(
+    private val flowOnDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    cacheDispatcher: CoroutineDispatcher =
+        Executors.newSingleThreadExecutor().asCoroutineDispatcher(),
+) {
+    private val cache = ComputationCache(cacheDispatcher)
 
     fun computeDivisors(number: Long) = flow {
         val range = 2.toLong()..number / 2.toLong()
@@ -42,5 +49,5 @@ class PrimeNumberComputer {
         }
         cache.computationCompleted(number, divisorCount)
         emit(ComputationProgress.Completed(divisorCount))
-    }.flowOn(Dispatchers.Default)
+    }.flowOn(flowOnDispatcher)
 }
