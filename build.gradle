@@ -4,7 +4,7 @@ buildscript {
     ext.daggerHilt = '2.32-alpha'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.0-alpha06'
@@ -46,7 +46,9 @@ buildscript {
 
                 // ViewModel and LiveData
                 "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version",
+                "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version",
                 "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+                "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version",
                 // Extensions
                 "androidx.lifecycle:lifecycle-runtime-ktx:$ktx_lifecycle",
                 "androidx.activity:activity-ktx:$activityExtensions",
