@@ -8,6 +8,7 @@ sealed class ComputationProgress {
 
     data class Completed(
         val divisors: Long,
+        val computedNumber: Long,
     ) : ComputationProgress() {
         val isPrime: Boolean
             get() = divisors == 0.toLong()

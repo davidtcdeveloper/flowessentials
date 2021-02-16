@@ -18,7 +18,10 @@ class PrimeNumberComputer @Inject constructor(
         cacheForNumber?.let {
             Timber.d("Returning cached value")
             emit(
-                ComputationProgress.Completed(cacheForNumber)
+                ComputationProgress.Completed(
+                    divisors = cacheForNumber,
+                    computedNumber = number
+                )
             )
             return@flow
         }
@@ -44,6 +47,11 @@ class PrimeNumberComputer @Inject constructor(
             )
         }
         cache.computationCompleted(number, divisorCount)
-        emit(ComputationProgress.Completed(divisorCount))
+        emit(
+            ComputationProgress.Completed(
+                divisors = divisorCount,
+                computedNumber = number
+            )
+        )
     }.flowOn(flowOnDispatcher)
 }
