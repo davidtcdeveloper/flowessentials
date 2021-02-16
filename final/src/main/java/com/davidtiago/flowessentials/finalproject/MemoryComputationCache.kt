@@ -1,7 +1,9 @@
 package com.davidtiago.flowessentials.finalproject
 
+import com.davidtiago.flowessentials.finalproject.di.CacheDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 interface ComputationCache {
     suspend fun forNumber(number: Long): Long?
@@ -9,8 +11,8 @@ interface ComputationCache {
     suspend fun computationCompleted(number: Long, divisorCount: Long)
 }
 
-class MemoryComputationCache(
-    private val dispatcher: CoroutineDispatcher,
+class MemoryComputationCache @Inject constructor(
+    @CacheDispatcher private val dispatcher: CoroutineDispatcher,
 ) : ComputationCache {
 
     private val cache = mutableMapOf<Long, Long>()

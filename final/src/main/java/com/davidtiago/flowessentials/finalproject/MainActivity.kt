@@ -5,25 +5,28 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.davidtiago.flowessentials.finalproject.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import javax.inject.Inject
 
 @SuppressLint("SetTextI18n")
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var primeNumberComputer: PrimeNumberComputer
 
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var scope: CoroutineScope
-
-    private lateinit var primeNumberComputer: PrimeNumberComputer
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        primeNumberComputer = PrimeNumberComputer()
 
         adjustViewForReadyToComputeState()
         binding.computeButton.setOnClickListener {

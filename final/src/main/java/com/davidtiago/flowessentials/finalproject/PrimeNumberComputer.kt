@@ -1,20 +1,16 @@
 package com.davidtiago.flowessentials.finalproject
 
+import com.davidtiago.flowessentials.finalproject.di.ComputingDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
-import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class PrimeNumberComputer(
-    private val flowOnDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    cacheDispatcher: CoroutineDispatcher =
-        Executors.newSingleThreadExecutor().asCoroutineDispatcher(),
-    private val cache: ComputationCache = MemoryComputationCache(cacheDispatcher),
+class PrimeNumberComputer @Inject constructor(
+    @ComputingDispatcher private val flowOnDispatcher: CoroutineDispatcher,
+    private val cache: ComputationCache,
 ) {
-
     fun computeDivisors(number: Long) = flow {
         val range = 2.toLong()..number / 2.toLong()
         var divisorCount: Long = 0
