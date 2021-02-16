@@ -1,7 +1,13 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
+    id "org.jetbrains.kotlin.kapt"
+    id "dagger.hilt.android.plugin"
     id "de.mannodermaus.android-junit5"
+}
+
+kapt {
+    correctErrorTypes true
 }
 
 android {
@@ -38,5 +44,7 @@ android {
 dependencies {
     implementation libraries
     testImplementation testLibraries
+    kapt annotationProcessors
+    kaptTest testAnnotationProcessors
     testRuntimeOnly testRuntimeLibraries
 }
