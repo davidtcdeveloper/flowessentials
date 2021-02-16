@@ -3,6 +3,7 @@ package com.davidtiago.flowessentials.finalproject
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.davidtiago.flowessentials.finalproject.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,6 +15,8 @@ import javax.inject.Inject
 @SuppressLint("SetTextI18n")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: ComputingViewModel by viewModels()
 
     @Inject
     lateinit var primeNumberComputer: PrimeNumberComputer
@@ -97,19 +100,5 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         scope.cancel()
-    }
-}
-
-sealed class ComputationProgress {
-    data class Computing(
-        val maxProgress: Int,
-        val currentProgress: Int,
-    ) : ComputationProgress()
-
-    data class Completed(
-        val divisors: Long,
-    ) : ComputationProgress() {
-        val isPrime: Boolean
-            get() = divisors == 0.toLong()
     }
 }
