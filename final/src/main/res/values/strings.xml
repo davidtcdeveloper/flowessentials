@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Flow Essentials Final</string>
+    <string name="is_it_prime">Is it prime?</string>
+    <string name="type_a_number_to_check_if_is_it_prime">Type a number to check if is it prime</string>
+    <string name="computing_if_d_is_prime">Computing if %d is prime</string>
+    <string name="cancel">Cancel</string>
+    <string name="check_another_number">Check another number</string>
 </resources>

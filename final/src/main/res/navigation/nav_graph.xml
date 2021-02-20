@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/inputFragment">
+
+    <fragment
+        android:id="@+id/inputFragment"
+        android:name="com.davidtiago.flowessentials.finalproject.input.InputFragment"
+        android:label="InputFragment">
+        <action
+            android:id="@+id/action_inputFragment_to_progressFragment"
+            app:destination="@id/progressFragment">
+            <argument
+                android:name="input"
+                app:argType="long" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.davidtiago.flowessentials.finalproject.progress.ProgressFragment"
+        android:label="ProgressFragment">
+        <action
+            android:id="@+id/action_progressFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+        <argument
+            android:name="input"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.davidtiago.flowessentials.finalproject.result.ResultFragment"
+        android:label="ResultFragment" />
+</navigation>
