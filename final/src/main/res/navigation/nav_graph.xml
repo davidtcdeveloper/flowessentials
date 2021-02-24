@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/inputFragment">
 
     <fragment
         android:id="@+id/inputFragment"
         android:name="com.davidtiago.flowessentials.finalproject.input.InputFragment"
-        android:label="InputFragment">
+        android:label="InputFragment"
+        tools:layout="@layout/fragment_input">
         <action
             android:id="@+id/action_inputFragment_to_progressFragment"
             app:destination="@id/progressFragment">
@@ -19,7 +21,9 @@
     <fragment
         android:id="@+id/progressFragment"
         android:name="com.davidtiago.flowessentials.finalproject.progress.ProgressFragment"
-        android:label="ProgressFragment">
+        android:label="ProgressFragment"
+
+        tools:layout="@layout/fragment_progress">
         <action
             android:id="@+id/action_progressFragment_to_resultFragment"
             app:destination="@id/resultFragment" />
@@ -30,5 +34,6 @@
     <fragment
         android:id="@+id/resultFragment"
         android:name="com.davidtiago.flowessentials.finalproject.result.ResultFragment"
-        android:label="ResultFragment" />
+        android:label="ResultFragment"
+        tools:layout="@layout/fragment_result" />
 </navigation>

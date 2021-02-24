@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/inputNumberEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -16,7 +16,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintVertical_bias="0.25"
+        android:autofillHints="none"
+        android:hint="@string/input_value_here"/>
 
     <Button
         android:id="@+id/computeButton"
@@ -26,7 +28,7 @@
         android:text="@string/is_it_prime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/inputNumberEditText" />
 
     <TextView
         android:id="@+id/textView"
@@ -35,7 +37,7 @@
         android:gravity="center"
         android:text="@string/type_a_number_to_check_if_is_it_prime"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumber"
+        app:layout_constraintBottom_toTopOf="@+id/inputNumberEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
