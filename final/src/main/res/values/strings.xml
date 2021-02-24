@@ -5,4 +5,5 @@
     <string name="computing_if_d_is_prime">Computing if %d is prime</string>
     <string name="cancel">Cancel</string>
     <string name="check_another_number">Check another number</string>
+    <string name="input_value_here">Input value here</string>
 </resources>
