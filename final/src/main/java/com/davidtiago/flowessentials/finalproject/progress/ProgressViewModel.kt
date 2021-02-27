@@ -3,8 +3,10 @@ package com.davidtiago.flowessentials.finalproject.progress
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,6 +21,7 @@ class ProgressViewModel @Inject constructor(
     fun computeDivisors(number: Long) {
         viewModelScope.launch {
             primeNumberComputer.computeDivisors(number)
+                .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
                 .collect { computingProgress ->
                     _progress.emit(computingProgress)
                 }
