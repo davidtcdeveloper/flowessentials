@@ -15,8 +15,7 @@ class PrimeNumberComputerTest {
     @Nested
     inner class ComputeDivisorsPrimeNumbersScenarios {
         private val primeNumberComputer = PrimeNumberComputer(
-            testDispatcher,
-            testDispatcher,
+            flowOnDispatcher = testDispatcher,
             cache = AlwaysEmptyCache()
         )
 
@@ -24,8 +23,8 @@ class PrimeNumberComputerTest {
         fun `all emissions for 2`() =
             testDispatcher.runBlockingTest {
                 val expectedEmissions = listOf(
-                    ComputationProgress.Computing(0, 0),
-                    ComputationProgress.Completed(0),
+                    ComputationProgress.Computing(2, 0, 0),
+                    ComputationProgress.Completed(2, 0),
                 )
                 val collectedDivisors: List<ComputationProgress> =
                     primeNumberComputer.computeDivisors(2)
@@ -45,7 +44,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = ComputationProgress.Completed(0),
+                    expected = ComputationProgress.Completed(701, 0),
                     actual = collectedDivisors.last()
                 )
             }
@@ -58,7 +57,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = ComputationProgress.Completed(0),
+                    expected = ComputationProgress.Completed(1481, 0),
                     actual = collectedDivisors.last()
                 )
             }
@@ -71,7 +70,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = ComputationProgress.Completed(0),
+                    expected = ComputationProgress.Completed(2999, 0),
                     actual = collectedDivisors.last()
                 )
             }
@@ -84,7 +83,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = ComputationProgress.Completed(0),
+                    expected = ComputationProgress.Completed(5189, 0),
                     actual = collectedDivisors.last()
                 )
             }
@@ -93,8 +92,7 @@ class PrimeNumberComputerTest {
     @Nested
     inner class ComputeDivisorsNonPrimeNumbersScenarios {
         private val primeNumberComputer = PrimeNumberComputer(
-            testDispatcher,
-            testDispatcher,
+            flowOnDispatcher = testDispatcher,
             cache = AlwaysEmptyCache()
         )
 
@@ -102,9 +100,9 @@ class PrimeNumberComputerTest {
         fun `all emissions for 4`() =
             testDispatcher.runBlockingTest {
                 val expectedEmissions = listOf(
-                    ComputationProgress.Computing(1, 0),
-                    ComputationProgress.Computing(1, 2),
-                    ComputationProgress.Completed(1),
+                    ComputationProgress.Computing(4, 1, 0),
+                    ComputationProgress.Computing(4, 1, 2),
+                    ComputationProgress.Completed(4, 1),
                 )
                 val collectedDivisors: List<ComputationProgress> =
                     primeNumberComputer.computeDivisors(4)
@@ -124,7 +122,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = ComputationProgress.Completed(2),
+                    expected = ComputationProgress.Completed(10, 2),
                     actual = collectedDivisors.last()
                 )
             }
@@ -137,8 +135,7 @@ class PrimeNumberComputerTest {
             testDispatcher.runBlockingTest {
                 val cache = FixedCache(10, 2)
                 val primeNumberComputer = PrimeNumberComputer(
-                    testDispatcher,
-                    testDispatcher,
+                    flowOnDispatcher = testDispatcher,
                     cache = cache,
                 )
                 val collectedDivisors: List<ComputationProgress> =
@@ -146,7 +143,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = listOf(ComputationProgress.Completed(2)),
+                    expected = listOf(ComputationProgress.Completed(10, 2)),
                     actual = collectedDivisors
                 )
                 assertTrue { cache.invoked }
@@ -157,8 +154,7 @@ class PrimeNumberComputerTest {
             testDispatcher.runBlockingTest {
                 val cache = FixedCache(1481, 0)
                 val primeNumberComputer = PrimeNumberComputer(
-                    testDispatcher,
-                    testDispatcher,
+                    flowOnDispatcher = testDispatcher,
                     cache = cache,
                 )
                 val collectedDivisors: List<ComputationProgress> =
@@ -166,7 +162,7 @@ class PrimeNumberComputerTest {
                         .toList()
 
                 assertEquals(
-                    expected = listOf(ComputationProgress.Completed(0)),
+                    expected = listOf(ComputationProgress.Completed(1481, 0)),
                     actual = collectedDivisors
                 )
                 assertTrue { cache.invoked }

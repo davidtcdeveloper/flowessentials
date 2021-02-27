@@ -27,6 +27,7 @@ class PrimeNumberComputer @Inject constructor(
         }
         emit(
             ComputationProgress.Computing(
+                number,
                 maxProgress = range.count(),
                 currentProgress = 0
             )
@@ -41,6 +42,7 @@ class PrimeNumberComputer @Inject constructor(
             }
             emit(
                 ComputationProgress.Computing(
+                    number = number,
                     maxProgress = range.count(),
                     currentProgress = i.toInt()
                 )
