@@ -6,4 +6,6 @@
     <string name="cancel">Cancel</string>
     <string name="check_another_number">Check another number</string>
     <string name="input_value_here">Input value here</string>
+    <string name="is_prime_number">%d\n is a prime number 👍</string>
+    <string name="is_not_prime_number">%1d \n is NOT a prime number 👎 \n can be divided by %2d other numbers</string>
 </resources>

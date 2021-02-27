@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/inputFragment">
-
     <fragment
         android:id="@+id/inputFragment"
         android:name="com.davidtiago.flowessentials.finalproject.input.InputFragment"
@@ -22,11 +21,11 @@
         android:id="@+id/progressFragment"
         android:name="com.davidtiago.flowessentials.finalproject.progress.ProgressFragment"
         android:label="ProgressFragment"
-
         tools:layout="@layout/fragment_progress">
         <action
             android:id="@+id/action_progressFragment_to_resultFragment"
-            app:destination="@id/resultFragment" />
+            app:destination="@id/resultFragment"
+            app:popUpTo="@id/inputFragment" />
         <argument
             android:name="input"
             app:argType="long" />
@@ -35,5 +34,12 @@
         android:id="@+id/resultFragment"
         android:name="com.davidtiago.flowessentials.finalproject.result.ResultFragment"
         android:label="ResultFragment"
-        tools:layout="@layout/fragment_result" />
+        tools:layout="@layout/fragment_result">
+        <argument
+            android:name="number"
+            app:argType="long" />
+        <argument
+            android:name="divisors"
+            app:argType="long" />
+    </fragment>
 </navigation>

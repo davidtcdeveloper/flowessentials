@@ -34,7 +34,7 @@ class ProgressFragment : Fragment() {
                     updateProgress(progress)
                 }
                 is ComputationProgress.Completed -> {
-                    navigateToCompleted()
+                    navigateToCompleted(progress)
                 }
             }
         }
@@ -42,9 +42,12 @@ class ProgressFragment : Fragment() {
         return binding.root
     }
 
-    private fun navigateToCompleted() {
+    private fun navigateToCompleted(progress: ComputationProgress.Completed) {
         findNavController().navigate(
-            ProgressFragmentDirections.actionProgressFragmentToResultFragment()
+            ProgressFragmentDirections.actionProgressFragmentToResultFragment(
+                number = progress.computedNumber,
+                divisors = progress.divisors,
+            )
         )
     }
 
