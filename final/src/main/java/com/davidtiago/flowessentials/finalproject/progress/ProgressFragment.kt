@@ -9,9 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.davidtiago.flowessentials.finalproject.ComputationProgress
+import com.davidtiago.flowessentials.finalproject.R
 import com.davidtiago.flowessentials.finalproject.databinding.FragmentProgressBinding
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ProgressFragment : Fragment() {
@@ -27,20 +27,33 @@ class ProgressFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProgressBinding.inflate(inflater, container, false)
+        binding.cancelButton.setOnClickListener { requireActivity().onBackPressed() }
         viewModel.computingProgress.observe(viewLifecycleOwner) { progress ->
             when (progress) {
-                is ComputationProgress.Computing -> { //TODO
+                is ComputationProgress.Computing -> {
+                    updateProgress(progress)
                 }
                 is ComputationProgress.Completed -> {
-                    findNavController().navigate(
-                        ProgressFragmentDirections.actionProgressFragmentToResultFragment()
-                    )
+                    navigateToCompleted()
                 }
             }
         }
-        Timber.d("Args input value %d", args.input)
         viewModel.computeDivisors(args.input)
         return binding.root
+    }
+
+    private fun navigateToCompleted() {
+        findNavController().navigate(
+            ProgressFragmentDirections.actionProgressFragmentToResultFragment()
+        )
+    }
+
+    private fun updateProgress(progress: ComputationProgress.Computing) {
+        with(binding) {
+            progressBar.max = progress.maxProgress
+            progressBar.progress = progress.currentProgress
+            textView.text = getString(R.string.computing_if_d_is_prime, progress.number)
+        }
     }
 
     override fun onDestroyView() {
