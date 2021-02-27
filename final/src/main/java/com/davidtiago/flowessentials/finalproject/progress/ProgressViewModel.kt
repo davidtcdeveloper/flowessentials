@@ -1,12 +1,12 @@
 package com.davidtiago.flowessentials.finalproject.progress
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,21 +14,17 @@ import javax.inject.Inject
 class ProgressViewModel @Inject constructor(
     private val primeNumberComputer: PrimeNumberComputer
 ) : ViewModel() {
-
-    private val _computingProgress = MutableLiveData<ComputationProgress>()
-    val computingProgress: LiveData<ComputationProgress>
-        get() = _computingProgress
+    private val _progress = MutableSharedFlow<ComputationProgress>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val progress by lazy { _progress.asSharedFlow() }
 
     fun computeDivisors(number: Long) {
         viewModelScope.launch {
             primeNumberComputer.computeDivisors(number)
-                .filter { computationProgress ->
-                    computationProgress is ComputationProgress.Completed ||
-                            (computationProgress is ComputationProgress.Computing &&
-                                    computationProgress.currentProgress.rem(1000) == 0)
-                }
                 .collect { computingProgress ->
-                    _computingProgress.postValue(computingProgress)
+                    _progress.emit(computingProgress)
                 }
         }
     }

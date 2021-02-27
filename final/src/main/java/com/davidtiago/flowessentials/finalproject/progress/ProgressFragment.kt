@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.davidtiago.flowessentials.finalproject.R
 import com.davidtiago.flowessentials.finalproject.databinding.FragmentProgressBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class ProgressFragment : Fragment() {
@@ -27,13 +29,15 @@ class ProgressFragment : Fragment() {
     ): View {
         _binding = FragmentProgressBinding.inflate(inflater, container, false)
         binding.cancelButton.setOnClickListener { requireActivity().onBackPressed() }
-        viewModel.computingProgress.observe(viewLifecycleOwner) { progress ->
-            when (progress) {
-                is ComputationProgress.Computing -> {
-                    updateProgress(progress)
-                }
-                is ComputationProgress.Completed -> {
-                    navigateToCompleted(progress)
+        lifecycleScope.launchWhenResumed {
+            viewModel.progress.collect { progress ->
+                when (progress) {
+                    is ComputationProgress.Computing -> {
+                        updateProgress(progress)
+                    }
+                    is ComputationProgress.Completed -> {
+                        navigateToCompleted(progress)
+                    }
                 }
             }
         }
