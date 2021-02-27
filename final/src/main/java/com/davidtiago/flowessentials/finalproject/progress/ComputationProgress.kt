@@ -1,4 +1,4 @@
-package com.davidtiago.flowessentials.finalproject
+package com.davidtiago.flowessentials.finalproject.progress
 
 sealed class ComputationProgress {
     data class Computing(
@@ -10,8 +10,5 @@ sealed class ComputationProgress {
     data class Completed(
         val computedNumber: Long,
         val divisors: Long,
-    ) : ComputationProgress() {
-        val isPrime: Boolean
-            get() = divisors == 0.toLong()
-    }
+    ) : ComputationProgress()
 }

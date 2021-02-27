@@ -1,5 +1,7 @@
 package com.davidtiago.flowessentials.finalproject
 
+import com.davidtiago.flowessentials.finalproject.progress.ComputationProgress
+import com.davidtiago.flowessentials.finalproject.progress.PrimeNumberComputer
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest

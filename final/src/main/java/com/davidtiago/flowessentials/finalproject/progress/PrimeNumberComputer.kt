@@ -1,6 +1,7 @@
-package com.davidtiago.flowessentials.finalproject
+package com.davidtiago.flowessentials.finalproject.progress
 
-import com.davidtiago.flowessentials.finalproject.di.ComputingDispatcher
+import com.davidtiago.flowessentials.finalproject.ComputationCache
+import com.davidtiago.flowessentials.finalproject.progress.di.ComputingDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn

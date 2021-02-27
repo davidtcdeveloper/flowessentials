@@ -1,6 +1,6 @@
 package com.davidtiago.flowessentials.finalproject
 
-import com.davidtiago.flowessentials.finalproject.di.CacheDispatcher
+import com.davidtiago.flowessentials.finalproject.progress.di.CacheDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

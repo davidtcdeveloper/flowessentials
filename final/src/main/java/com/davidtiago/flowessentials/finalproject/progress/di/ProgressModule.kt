@@ -1,4 +1,4 @@
-package com.davidtiago.flowessentials.finalproject.di
+package com.davidtiago.flowessentials.finalproject.progress.di
 
 import com.davidtiago.flowessentials.finalproject.ComputationCache
 import com.davidtiago.flowessentials.finalproject.MemoryComputationCache
@@ -24,7 +24,7 @@ annotation class ComputingDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ComputationModule {
+abstract class ProgressModule {
 
     @Binds
     abstract fun bindsCache(memoryComputationCache: MemoryComputationCache): ComputationCache
