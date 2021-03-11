@@ -2,7 +2,7 @@
 buildscript {
     ext.kotlin_version = "1.4.30"
     ext.daggerHilt = '2.33-beta'
-    ext.navVersion = "2.3.3"
+    ext.navVersion = '2.3.4'
     repositories {
         google()
         mavenCentral()
@@ -24,14 +24,14 @@ buildscript {
         // local variables (use def)
         def appcompatVersion = '1.2.0'
         def constraintLayoutVersion = '2.0.4'
-        def coroutinesAndroidVersion = '1.4.0'
+        def coroutinesAndroidVersion = '1.4.3-native-mt'
         def lifecycleVersion = '2.3.0'
         def livedataVersion = '2.3.0'
         def materialVersion = '1.3.0'
         def ktxLifecycle = '2.3.0'
         def junit5 = '5.7.1'
         def timber = '4.7.1'
-        def activityExtensions = '1.3.0-alpha03'
+        def activityExtensions = '1.3.0-alpha04'
 
         libraries = [
                 // Kotlin standard library
